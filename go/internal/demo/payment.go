@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -37,17 +38,28 @@ type paymentToken struct {
 	AccessToken           string            `json:"accessToken" form:"accessToken" query:"accessToken"`
 	CrossReference        string            `json:"crossReference" form:"crossReference" query:"crossReference"`
 	MerchantURL           string            `json:"merchantUrl" form:"merchantUrl" query:"merchantUrl"`
+	MerchantTransactionID string            `json:"merchantTransactionId" form:"merchantTransactionId" query:"merchantTransactionId"`
 	PreviousTransactionID string            `json:"previousTransactionId" form:"previousTransactionId" query:"previousTransactionId"`
 	WebhookURL            string            `json:"webhookUrl" form:"webhookUrl" query:"webhookUrl"`
 	CustomerID            string            `json:"customerId" form:"customerId" query:"customerId"`
 	PaymentMethodID       string            `json:"paymentMethodId" form:"paymentMethodId" query:"paymentMethodId"`
 	WaitPreExecute        bool              `json:"waitPreExecute" form:"waitPreExecute" query:"waitPreExecute"`
 	MetaData              map[string]string `json:"metaData,omitempty"`
+	CDNBaseURL            string            `json:"cndBaseUrl" form:"cdnBaseUrl" query:"cdnBaseUrl"`
+	COFSetup              *cofSetup         `json:"cofSetup,omitempty" form:"cofSetup" query:"cofSetup"`
 }
 
 type paymentTokenResponse struct {
 	ID        string `json:"id"`
 	ExpiresAt int64  `json:"expiresAt"`
+}
+
+type cofSetup struct {
+	IntendedAmount        string    `json:"intendedAmount" form:"intendedAmount" query:"intendedAmount"`
+	IntendedExecutionDate time.Time `json:"intendedExecutionDate" form:"intendedExecutionDate" query:"intendedExecutionDate"`
+	ExpiryDate            time.Time `json:"expiryDate" form:"expiryDate" query:"expiryDate"`
+	Type                  string    `json:"type" form:"type" query:"type"`
+	Terms                 string    `json:"terms" form:"terms" query:"terms"`
 }
 
 type paymentInfo struct {
@@ -91,13 +103,15 @@ type crossReferencePaymentResponse struct {
 type paymentService struct {
 	apiURL string
 	webURL string
+	cdnURL string
 	client *http.Client
 }
 
-func newPaymentService(apiURL, webURL string) paymentService {
+func newPaymentService(apiURL, webURL, cdnURL string) paymentService {
 	return paymentService{
 		apiURL: apiURL,
 		webURL: webURL,
+		cdnURL: cdnURL,
 		client: http.DefaultClient,
 	}
 }
@@ -123,6 +137,7 @@ func (p paymentService) createPaymentToken(apiKey string, paymentToken *paymentT
 	paymentToken.ID = tr.ID
 	paymentToken.AccessToken = tr.ID
 	paymentToken.HostBaseURL = p.webURL
+	paymentToken.CDNBaseURL = p.cdnURL
 
 	return nil
 }
@@ -150,6 +165,9 @@ func (p paymentService) callAPI(apiKey, method, url string, body interface{}, re
 		}
 
 		req, err = http.NewRequest(method, url, bytes.NewBuffer(b))
+		if err != nil {
+			return err
+		}
 	}
 
 	if err != nil {
@@ -193,7 +211,7 @@ func (p paymentService) callAPI(apiKey, method, url string, body interface{}, re
 
 func buildDefaultToken(paymentToken *paymentToken) {
 	paymentToken.Amount = getValueOrDefault(paymentToken.Amount, "100")
-	paymentToken.CurrencyCode = getValueOrDefault(paymentToken.CurrencyCode, "826")
+	paymentToken.CurrencyCode = getValueOrDefault(paymentToken.CurrencyCode, getCurrencyCode())
 	paymentToken.GatewayUsername = getValueOrDefault(paymentToken.GatewayUsername, getGatewayUsername())
 	paymentToken.GatewayPassword = getValueOrDefault(paymentToken.GatewayPassword, getGatewayPassword())
 	paymentToken.MerchantURL = getValueOrDefault(paymentToken.MerchantURL, getMerchantURL())

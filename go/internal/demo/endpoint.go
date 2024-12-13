@@ -60,6 +60,8 @@ func (e endpoint) init() (*echo.Echo, error) {
 		api.GET("/access-token", e.accessToken)
 	}
 
+	r.GET("/dojo", e.dojo)
+
 	r.HTTPErrorHandler = func(err error, context echo.Context) {
 		context.Logger().Errorf("error processing %s : %+v", context.Path(), err)
 		r.DefaultHTTPErrorHandler(err, context)
@@ -186,6 +188,15 @@ func (e endpoint) angular(c echo.Context) error {
 	return c.Render(http.StatusOK, "index.html", m)
 }
 
+func (e endpoint) dojo(c echo.Context) error {
+	paymentToken, err := e.getPaymentToken(c)
+	if err != nil {
+		return err
+	}
+
+	return c.Render(http.StatusOK, "dojo.html", paymentToken)
+}
+
 func (e endpoint) accessToken(c echo.Context) error {
 	c.Request().Header.Add("Access-Control-Allow-Origin", "*")
 
@@ -229,6 +240,37 @@ func (e endpoint) getPaymentToken(c echo.Context) (paymentToken, error) {
 		paymentToken.AccessToken = paymentToken.ID
 		paymentToken.HostBaseURL = e.paymentService.webURL
 		return paymentToken, nil
+	}
+
+	// COF Setup
+	if c.QueryParam("intendedAmount") != "" &&
+		c.QueryParam("type") != "" &&
+		c.QueryParam("terms") != "" {
+		paymentToken.COFSetup = &cofSetup{
+			IntendedAmount: c.QueryParam("intendedAmount"),
+			Type:           c.QueryParam("type"),
+			Terms:          c.QueryParam("terms"),
+		}
+
+		intendedExecutionDate := c.QueryParam("intendedExecutionDate")
+		if intendedExecutionDate != "" {
+			intendedExecutionDateParsed, err := time.Parse(time.RFC3339, intendedExecutionDate)
+			if err != nil {
+				return paymentToken, err
+			}
+
+			paymentToken.COFSetup.IntendedExecutionDate = intendedExecutionDateParsed
+		}
+
+		expiryDate := c.QueryParam("expiryDate")
+		if expiryDate != "" {
+			expiryDateParsed, err := time.Parse(time.RFC3339, expiryDate)
+			if err != nil {
+				return paymentToken, err
+			}
+
+			paymentToken.COFSetup.ExpiryDate = expiryDateParsed
+		}
 	}
 
 	if err := e.paymentService.createPaymentToken(getApiKey(c.Request()), &paymentToken, getSandboxFlag(c), getUserIP(c.Request())); err != nil {
