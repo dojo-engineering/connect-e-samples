@@ -1,0 +1,100 @@
+<!--header.html-->
+
+<!doctype html>
+<html>
+    <head>
+        <title>Demo Payment</title>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+
+        <style>
+            .form-control.touched:invalid {
+                color: #B00;
+                border: #B00 solid 1px;
+            }
+
+            select option {
+                color: #495057;
+            }
+
+            .errors{
+                color: #B00;
+            }
+
+            body {
+                background-color: rgba(100, 100, 100, 0.05);
+            }
+
+            .container {
+                background-color: white;
+                box-shadow: 0 0 10px 0 rgba(100, 100, 100, 0.2);
+            }
+
+            iframe {
+                width: 100%;
+            }
+
+            .demo1 {
+                font-family: 'Do Hyeon', sans-serif;
+            }
+
+            iframe.threeDs {
+                width: 370px;
+                height: 366px;
+                margin: 100px 0 0 -175px;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+            }
+
+            #loader {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0.3);
+            }
+        </style>
+    </head>
+    <body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <span class="navbar-brand">Connect-e Sample</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Standard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/standard-address">Standard Address</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/standard-billing-address">Standard With Billing Address</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/checkout">Checkout</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/angular">Angular</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/configure">Configure</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <a class="nav-link" href="https://docs.connect.paymentsense.cloud/ConnectE/GettingStarted" target="_blank">View Docs</a>
+            </form>
+        </div>
+    </nav>
