@@ -1,4 +1,4 @@
-module github.com/paymentsense/connect-e-samples/go
+module github.com/dojo-engineering/connect-e-samples/go
 
 go 1.18
 
