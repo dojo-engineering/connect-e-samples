@@ -32,9 +32,9 @@ CDN_URL: PUT HERE THE DOJO CDN URL IF USING DOJO JS (Prod: https://cdn.dojo.tech
 COUNTRY_CODE: PUT HERE THE ISO COUTRY CODE (REF: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
 ```
 
-### Running using docker-compose
+### Running using docker compose
 
-1. Create docker-compose file
+1. Create docker compose file
 
 ```bash
 version: "3.8"
@@ -57,16 +57,16 @@ services:
 1. Build the docker image
 
 ```bash
-docker-compose build
+docker compose build
 ```
 
 1. Run the built image
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
-> NOTE: You can run both commands at once with docker-compose up --build.
+> NOTE: You can run both commands at once with docker compose up --build.
 
 1. Verify that the service is working.
 
@@ -79,7 +79,7 @@ To stop Docker Compose, on your terminal window, press **Ctrl + C**.
 To remove the produced images run:
 
 ```console
-docker-compose rm
+docker compose rm
 ```
 For more information see the [Docker Compose
 documentation](https://docs.docker.com/compose/gettingstarted/).
