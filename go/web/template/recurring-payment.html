@@ -36,6 +36,7 @@
 
 <script src="{{.HostBaseURL}}/assets/js/client.js" ></script>
 <script>
+    const hideCv2 = new URLSearchParams(window.location.search).get('hideCv2') === 'true';
     var config = {
         onIframeLoaded: function(){ console.log("iframe loaded") },
         paymentDetails: {
@@ -45,6 +46,7 @@
         },
         containerId: "demo",
         fontCss: ['https://fonts.googleapis.com/css?family=Do+Hyeon'],
+        hideCv2: hideCv2,
         styles: {
             cv2: {
                 default: {
