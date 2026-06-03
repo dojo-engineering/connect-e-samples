@@ -1,7 +1,6 @@
 package demo
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -95,25 +94,10 @@ func getUserIP(r *http.Request) string {
 
 func getCurrencyCode() string {
 	countryCode := strings.ToLower(os.Getenv("COUNTRY_CODE"))
-
-	// Refer https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes to expand and add more currency codes
-	if countryCode != "" {
-		switch countryCode {
-		case "gb":
-			return "826"
-		case "ie":
-			fallthrough
-		case "es":
-			fallthrough
-		case "it":
-			return "978"
-		default:
-			fmt.Println("Falling back to currency code 826")
-			return "826"
-		}
-
+	//default to gb if not set
+	if countryCode == "" || countryCode == "gb" {
+		return "826"
 	}
-	fmt.Println("Country Code not speciied in enviornment")
-	return "826"
-
+	// all other new markets are likely to use 978 (euros)
+	return "978"
 }
